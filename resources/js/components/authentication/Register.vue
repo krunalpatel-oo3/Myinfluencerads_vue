@@ -18,12 +18,12 @@
                             <form class="row cstm-form form-border login-form" method="post">
                                 <div class="col-12 col-md-6 ">
                                     <div class="form-group">
-                                      <input type="text" class="form-control" required="" v-model="registerform.fname" placeholder="First Name">
+                                      <input type="text" class="form-control" v-model="registerform.fname" placeholder="First Name">
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="form-group">
-                                      <input type="text" class="form-control" required="" v-model="registerform.lname" placeholder="Last Name">
+                                      <input type="text" class="form-control"  v-model="registerform.lname" placeholder="Last Name">
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -37,22 +37,22 @@
                               </div>
                                 <div class="col-12">
                                     <div class="form-group">
-                                      <input type="text" class="form-control" v-model="registerform.phone_number" required="" placeholder="Phone Number">
+                                      <input type="text" class="form-control" v-model="registerform.phone_number" placeholder="Phone Number">
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
-                                      <input type="text" class="form-control" required="" v-model="registerform.email" placeholder="Email">
+                                      <input type="text" class="form-control" v-model="registerform.email" placeholder="Email">
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="form-group">
-                                      <input type="text" class="form-control" required="" placeholder="Password" v-model="registerform.password">
+                                      <input type="text" class="form-control"  placeholder="Password" v-model="registerform.password">
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="form-group">
-                                      <input type="text" class="form-control" required="" v-model="registerform.confirm_pass" placeholder="Confirm Password">
+                                      <input type="text" class="form-control" v-model="registerform.confirm_pass" placeholder="Confirm Password">
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -115,9 +115,19 @@
                     email: "",
                     password: "",
                     cpassword: "",
-                    agree: ""
+                    agree: "",
                 }
             }   
+        },
+        setup(){
+          const doregister = async() => {
+            console.log('This is ..');
+            return false;
+          }
+
+          return {
+            doregister
+          }
         },
         mounted(){
         this.signupBackgroundImg = "assets/images/auth/signup-bg.jpg";
