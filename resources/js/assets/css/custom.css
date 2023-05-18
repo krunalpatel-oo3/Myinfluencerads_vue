@@ -1,0 +1,23 @@
+[x-cloak] {
+  display: none;
+}
+
+.multi-dropdown .svg-icon {
+  width: 1em;
+  height: 1em;
+}
+
+.multi-dropdown .svg-icon path,
+.multi-dropdown .svg-icon polygon,
+.multi-dropdown .svg-icon rect {
+  fill: #333;
+}
+
+.multi-dropdown .svg-icon circle {
+  stroke: #4691f6;
+  stroke-width: 1;
+}
+
+.maxh-10 {
+  max-height: 10rem;
+}
