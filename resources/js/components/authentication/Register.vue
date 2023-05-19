@@ -15,7 +15,7 @@
                             <div class="or-divider">
                                 <span>OR</span>
                             </div>
-                            <form class="row cstm-form form-border login-form" method="post">
+                            <div class="row cstm-form form-border login-form" method="post">
                                 <div class="col-12 col-md-6 ">
                                     <div class="form-group">
                                       <input type="text" class="form-control" v-model="registerform.fname" placeholder="First Name">
@@ -47,12 +47,12 @@
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="form-group">
-                                      <input type="text" class="form-control"  placeholder="Password" v-model="registerform.password">
+                                      <input type="password" class="form-control"  placeholder="Password" v-model="registerform.password">
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="form-group">
-                                      <input type="text" class="form-control" v-model="registerform.confirm_pass" placeholder="Confirm Password">
+                                      <input type="password" class="form-control" v-model="registerform.confirm_pass" placeholder="Confirm Password">
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -60,7 +60,7 @@
                                       <button type="submit" class="btn btn-pink w-100 hover-btn" @click="doregister">Register</button>
                                     </div>
                                 </div>
-                            </form>
+                              </div>
                             <div class="row">
                                 <div class="col-12">
                                     <div class="login-footer text-center">
@@ -100,10 +100,14 @@
 
 <script>
     import {reactive,ref} from 'vue'
-    
+    //Toaster notification
+    import { useToast } from "vue-toastification";
+    import "vue-toastification/dist/index.css" 
     
     export default {
         name: "Register",
+        setup(){
+        },
         data(){
             return {
                 signupBackgroundImg: "",
@@ -119,15 +123,65 @@
                 }
             }   
         },
-        setup(){
-          const doregister = async() => {
-            console.log('This is ..');
-            return false;
-          }
+        methods:{
+            async doregister() {
+              // Get toast interface
+              const toast = useToast();
 
-          return {
-            doregister
-          }
+              if (this.registerform.fname == "") {
+                toast.error('Please enter First name');
+                return false;
+              }
+              else if (this.registerform.lname == "") {
+                toast.error('Please enter Last name')
+                return false;
+              }
+              else if (this.registerform.role == "" || this.registerform.role == 0) {
+                toast.error('Please select role')
+                return false;
+              }
+              else if (this.registerform.phone_number == "") {
+                toast.error('Please enter phone number')
+                return false;
+              }
+              else if (this.registerform.email == "") {
+                toast.error('Please enter email')
+                return false;
+              }
+              else if (this.registerform.password == "") {
+                toast.error('Please enter password')
+                return false;
+              }
+              else if (this.registerform.confirm_pass == "") {
+                toast.error('Please enter confirm password')
+                return false;
+              }
+              else {
+                // do registration
+                alert('Submit//');
+                axios.post('/api/registration',
+                    {
+                        fname:this.registerform.fname,
+                        lname:this.registerform.lname,
+                        email:this.registerform.email,
+                        role:this.registerform.role,
+                        phone_number:this.registerform.phone_number,
+                        password:this.registerform.password,
+                        confirm_pass:this.registerform.confirm_pass,
+                    })
+                    .then((res) => {
+                        console.log(res)
+                        router.push({name: 'Login'})
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    });
+              }
+            },
+
+          // return {
+          //   doregister
+          // }
         },
         mounted(){
         this.signupBackgroundImg = "assets/images/auth/signup-bg.jpg";

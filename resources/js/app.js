@@ -7,7 +7,14 @@
 import './bootstrap';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import Toast from "vue-toastification";
 
+const app = createApp(App);
+app.use(Toast, {
+    transition: "Vue-Toastification__fade",
+    maxToasts: 20,
+    newestOnTop: true
+});
 // Import components
 import App from './App.vue';
 // import header from './components/includes/header.vue';
@@ -39,8 +46,8 @@ const router = createRouter({
     ]
 });
 
-const app = createApp(App);
 app.use(router);
+
 // app.use(VueSweetalert2);
 
 app.mount('#app');

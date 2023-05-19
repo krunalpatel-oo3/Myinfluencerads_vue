@@ -1,0 +1,1547 @@
+<template>
+  <div>
+    <Header />
+    <main class="main">
+      <!-- Intro -->
+      <section
+        class="section-intro"
+        :style="{ backgroundImage: `url(${publicPath}home-intro-bg.jpg)` }"
+      >
+        <div class="container">
+          <div class="intro-i">
+            <h1 v-html="homepageJoinOurCommunityBlockHeaderText"></h1>
+
+            <div class="btns">
+              <a @click.prevent="$modal.show('register-modal-dialog')" v-if="!isAuthenticated"
+                 class="btn btn-primary btn-lg">Join Now</a>
+              <a @click.prevent="$modal.show('register-modal-dialog')" v-if="!isAuthenticated"
+                 class="btn btn-primary btn-lg" style="width: 222px">Ask a Questionssssssssssss</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Community -->
+      <section class="section-community">
+        <div class="container">
+          <h2 class="h1">Community</h2>
+
+          <p class="desc" v-html="homepageCommunityListingBlockHeaderText"></p>
+
+          <ul class="nav nav-ctabs">
+            <li
+              class="nav-link"
+              :class="communityHomeTab == 1 ? 'active' : ''"
+              @click="communityHomeTab = 1"
+            >
+              Newest
+            </li>
+            <!-- <li
+              class="nav-link"
+              :class="communityHomeTab == 2 ? 'active' : ''"
+              @click="communityHomeTab = 2"
+            >
+              Featured
+            </li> -->
+            <li
+              class="nav-link"
+              :class="communityHomeTab == 2 ? 'active' : ''"
+              @click="communityHomeTab = 2"
+            >
+              Popular
+            </li>
+          </ul>
+
+          <div class="tabs-content">
+            <div class="tab-content" v-if="communityHomeTab == 1">
+              <div class="cpost-list">
+                <div class="cpost" v-for="nextCommunityPopularQuestion in communityPopularQuestions"
+                     :key="nextCommunityPopularQuestion.id">
+                  <div class="cpost-body">
+                    <div class="cpost-title">
+                      <router-link @click="loadCommunityData()" style="cursor: pointer;"
+                                   :to="{
+                      name: 'communitydetail',
+                      params: { slug: nextCommunityPopularQuestion.slug }
+                    }"
+                      >{{ nextCommunityPopularQuestion.title.substring(0, 120) }}
+                      </router-link>
+                    </div>
+                    <div class="cpost-text">
+                      {{ nextCommunityPopularQuestion.desc.substring(0, 220) }}
+                    </div>
+                  </div>
+                  <div class="cpost-footer">
+                    <ul
+                      class="tags"
+                      v-if="
+                      nextCommunityPopularQuestion.community_tag_tagged.length
+                    "
+                    >
+                      <li
+                        v-for="nextCommunityTagTagged in nextCommunityPopularQuestion.community_tag_tagged"
+                        :key="nextCommunityTagTagged.id"
+                      ><a style="cursor: pointer;"
+                          @click.prevent="searchTags(nextCommunityTagTagged.tag.title,nextCommunityTagTagged.tag.id)"
+                          :class="['tag-'+nextCommunityTagTagged.tag.color, 'tag']">{{ nextCommunityTagTagged.tag.title
+                        }}</a></li>
+                    </ul>
+                    <div class="cpost-info">
+                      <div class="cpost-info-item">
+                        <div class="num">
+                          {{
+                            nFormatter(nextCommunityPopularQuestion.user_community_vote_count, 1)
+                          }}
+                        </div>
+                        <div
+                          class="lbl"
+                          @click.prevent="voteCommunity(nextCommunityPopularQuestion.id)"
+                        >
+                          <icon-base
+                            width="14"
+                            height="13.07"
+                            view-box="0 0 20 18.67"
+                            icon-name="like"
+                          >
+                            <icon-like />
+                          </icon-base>
+                          <span>Votes</span>
+                        </div>
+                      </div>
+                      <div class="cpost-info-item">
+                        <div class="num">
+                          {{ nFormatter(nextCommunityPopularQuestion.community_answer_count, 1) }}
+                        </div>
+                        <div class="lbl">
+                          <icon-base
+                            width="14"
+                            height="14"
+                            view-box="0 0 19 18.96"
+                            icon-name="answers"
+                          >
+                            <icon-answers />
+                          </icon-base>
+                          <span>Answers</span>
+                        </div>
+                      </div>
+                      <div class="cpost-info-item">
+                        <div class="num">
+                          {{
+                            nFormatter(nextCommunityPopularQuestion.user_community_viewed_count, 1)
+                          }}
+                        </div>
+                        <div class="lbl">
+                          <icon-base
+                            width="14.57"
+                            height="9.38"
+                            view-box="0 0 19.23 12.38"
+                            icon-name="views"
+                          >
+                            <icon-views />
+                          </icon-base>
+                          <span>Views</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div class="tab-content" v-if="communityHomeTab == 2">
+              <div class="cpost-list">
+                <div class="cpost" v-for="nextCommunityNewQuestion in communityNewQuestions"
+                     :key="nextCommunityNewQuestion.id">
+                  <div class="cpost-body">
+                    <div class="cpost-title">
+                      <router-link @click="loadCommunityData()" style="cursor: pointer;"
+                                   :to="{
+                      name: 'communitydetail',
+                      params: { slug: nextCommunityNewQuestion.slug }
+                    }"
+                      >{{ nextCommunityNewQuestion.title.substring(0, 120) }}
+                      </router-link>
+                    </div>
+                    <div class="cpost-text">
+                      {{ nextCommunityNewQuestion.desc.substring(0, 220) }}
+                    </div>
+                  </div>
+                  <div class="cpost-footer">
+                    <ul
+                      class="tags"
+                      v-if="
+                      nextCommunityNewQuestion.community_tag_tagged.length
+                    "
+                    >
+                      <li
+                        v-for="nextCommunityTagTagged in nextCommunityNewQuestion.community_tag_tagged"
+                        :key="nextCommunityTagTagged.id"
+                      ><a style="cursor: pointer;"
+                          @click.prevent="searchTags(nextCommunityTagTagged.tag.title,nextCommunityTagTagged.tag.id)"
+                          :class="['tag-'+nextCommunityTagTagged.tag.color, 'tag']">{{ nextCommunityTagTagged.tag.title
+                        }}</a></li>
+                    </ul>
+                    <div class="cpost-info">
+                      <div class="cpost-info-item">
+                        <div class="num">
+                          {{
+                            nFormatter(nextCommunityNewQuestion.user_community_vote_count, 1)
+                          }}
+                        </div>
+                        <div
+                          class="lbl"
+                          @click.prevent="voteCommunity(nextCommunityNewQuestion.id)"
+                        >
+                          <icon-base
+                            width="14"
+                            height="13.07"
+                            view-box="0 0 20 18.67"
+                            icon-name="like"
+                          >
+                            <icon-like />
+                          </icon-base>
+                          <span>Votes</span>
+                        </div>
+                      </div>
+                      <div class="cpost-info-item">
+                        <div class="num">
+                          {{ nFormatter(nextCommunityNewQuestion.community_answer_count, 1) }}
+                        </div>
+                        <div class="lbl">
+                          <icon-base
+                            width="14"
+                            height="14"
+                            view-box="0 0 19 18.96"
+                            icon-name="answers"
+                          >
+                            <icon-answers />
+                          </icon-base>
+                          <span>Answers</span>
+                        </div>
+                      </div>
+                      <div class="cpost-info-item">
+                        <div class="num">
+                          {{
+                            nFormatter(nextCommunityNewQuestion.user_community_viewed_count, 1)
+                          }}
+                        </div>
+                        <div class="lbl">
+                          <icon-base
+                            width="14.57"
+                            height="9.38"
+                            view-box="0 0 19.23 12.38"
+                            icon-name="views"
+                          >
+                            <icon-views />
+                          </icon-base>
+                          <span>Views</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <div class="view-all">
+            <router-link :to="{ name: 'community' }">View All</router-link>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gigs -->
+      <section class="section-gigs section-gigs-home">
+        <div class="container">
+          <h2 class="h1">Systems</h2>
+          <p class="desc" v-html="homepageGigsListingBlockHeaderText"></p>
+          <ul class="nav nav-ctabs">
+            <li
+              class="nav-link"
+              :class="gigsHomeTab == 1 ? 'active' : ''"
+              @click="gigsHomeTab = 1"
+            >
+              Newest
+            </li>
+            <li
+              class="nav-link"
+              :class="gigsHomeTab == 2 ? 'active' : ''"
+              @click="gigsHomeTab = 2"
+            >
+              Featured
+            </li>
+            <li
+              class="nav-link"
+              :class="gigsHomeTab == 3 ? 'active' : ''"
+              @click="gigsHomeTab = 3"
+            >
+              Popular
+            </li>
+          </ul>
+
+          <div class="tabs-content">
+            <div class="tab-content" v-if="gigsHomeTab == 1">
+              <div class="row">
+                <div
+                  class="col-lg-3 col-sm-6 col-sm-12 mb-3"
+                  v-for="nextHomepageProject in homepageProjects.slice(0, 4)"
+                  :key="nextHomepageProject.id"
+                >
+                  <div class="card card-project">
+                    <div class="card-img-top">
+                      <router-link
+                        :to="{
+                          name: 'project',
+                          params: { slug: nextHomepageProject.slug }
+                        }"
+                      >
+                        <img
+                          :src="
+                            nextHomepageProject.projectImagePropsArray.image_url || `${publicPath}no-image.jpg`
+                          "
+                          :alt="nextHomepageProject.projectImagePropsArray.info"
+                        />
+                      </router-link>
+                    </div>
+                    <div class="card-body">
+                      <div class="card-title-vote">
+                        <div class="card-title">
+                          <router-link
+                            class="link-hover"
+                            :to="{
+                              name: 'project',
+                              params: { slug: nextHomepageProject.slug }
+                            }"
+                          >
+                            {{ nextHomepageProject.name.substring(0, 20) }}
+                          </router-link>
+                        </div>
+                        <button
+                          class="btn btn-link btn-icon btn-vote"
+                          v-show="!nextHomepageProject.is_already_voted"
+                          @click.prevent="voteProject(nextHomepageProject.id)"
+                        >
+                          <icon-base
+                            width="18"
+                            height="17.25"
+                            view-box="0 0 18 17.25"
+                            icon-name="like-4"
+                          >
+                            <icon-like-4 />
+                          </icon-base>
+                        </button>
+                        <span
+                          class="btn btn-link btn-icon"
+                          v-show="nextHomepageProject.is_already_voted"
+                        >
+                          <icon-base
+                            width="18"
+                            height="17.25"
+                            view-box="0 0 18 17.25"
+                            icon-name="like-5"
+                          >
+                            <icon-like-5 />
+                          </icon-base>
+                        </span>
+                      </div>
+                      <div class="card-category">
+                        <div class="label">
+                          <router-link
+                            :to="{
+                              name: 'projectsByCategory',
+                              params: {
+                                slug: nextHomepageProject.category.slug
+                              }
+                            }"
+                          >
+                            {{ nextHomepageProject.category.title }}
+                          </router-link>
+                        </div>
+                      </div>
+                      <div class="card-category">
+                        <div class="label">
+                          <router-link to="/">{{ nextHomepageProject.categoryname }}</router-link>
+                          <span> | </span>
+                          <router-link to="/">Sub-Category</router-link>
+                        </div>
+                      </div>
+                      <p class="card-text" style="height: 100px">
+                        <span v-html="nextHomepageProject.desc.substring(0, 120)"></span>
+                      </p>
+                      <div class="card-price-more">
+                        <div class="more">
+                          <router-link
+                            :to="{
+                              name: 'project',
+                              params: { slug: nextHomepageProject.slug }
+                            }"
+                            class="btn btn-link btn-icon"
+                          >
+                            <span>Learn More</span>
+                          </router-link>
+                        </div>
+                        <div class="projectby">
+                          <span>Project by</span>
+                          <router-link :to="{
+                      name: 'User Profile',
+                      params: { slug: nextHomepageProject.creator.login }
+                    }">
+                            <img
+                              :src="nextHomepageProject.creatorUserProfilePhotoImageProps.image_url"
+                              alt=""
+                              class="rounded-circle"
+                            />
+                          </router-link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content" v-if="gigsHomeTab == 2">
+              <div class="row">
+                <div
+                  class="col-lg-3 col-sm-6 col-sm-12 mb-3"
+                  v-for="nextHomepageProjectFeatured in homepageProjectsFeatured.slice(0, 4)"
+                  :key="nextHomepageProjectFeatured.id"
+                >
+                  <div class="card card-project">
+                    <div class="card-img-top">
+                      <router-link
+                        class="link-hover"
+                        :to="{
+                          name: 'project',
+                          params: { slug: nextHomepageProjectFeatured.slug }
+                        }"
+                      >
+                        <img
+                          :src="
+                            nextHomepageProjectFeatured.projectImagePropsArray.image_url || `${publicPath}no-image.jpg`
+                           "
+                          :alt="
+                            nextHomepageProjectFeatured.projectImagePropsArray.info
+                          "
+                        />
+                        <span
+                          class="is-featured"
+                          :style="{
+                            backgroundImage: `url(${publicPath}featured-bg.png)`
+                          }"
+                        >Featured</span
+                        >
+                      </router-link>
+                    </div>
+                    <div class="card-body">
+                      <div class="card-title-vote">
+                        <div class="card-title">
+                          <router-link
+                            class="link-hover"
+                            :to="{
+                              name: 'project',
+                              params: { slug: nextHomepageProjectFeatured.slug }
+                            }"
+                          >
+                            {{ nextHomepageProjectFeatured.name }}
+                          </router-link>
+                        </div>
+                        <button
+                          class="btn btn-link btn-icon btn-vote"
+                          v-show="!nextHomepageProjectFeatured.is_already_voted"
+                          @click.prevent="
+                            voteProject(nextHomepageProjectFeatured.id)
+                          "
+                        >
+                          <icon-base
+                            width="18"
+                            height="17.25"
+                            view-box="0 0 18 17.25"
+                            icon-name="like-4"
+                          >
+                            <icon-like-4 />
+                          </icon-base>
+                        </button>
+                        <span
+                          class="btn btn-link btn-icon"
+                          v-show="nextHomepageProjectFeatured.is_already_voted"
+                        >
+                          <icon-base
+                            width="18"
+                            height="17.25"
+                            view-box="0 0 18 17.25"
+                            icon-name="like-5"
+                          >
+                            <icon-like-5 />
+                          </icon-base>
+                        </span>
+                      </div>
+                      <div class="card-category">
+                        <div class="label">
+                          <router-link to="/">Music Category</router-link>
+                          <span> | </span>
+                          <router-link to="/">Sub-Category</router-link>
+                        </div>
+                      </div>
+
+                      <p class="card-text" style="height: 100px">
+                        <span
+                          v-html="nextHomepageProjectFeatured.short_desc"
+                        ></span>
+                      </p>
+
+                      <div class="card-price-more">
+                        <div class="more">
+                          <router-link
+                            :to="{
+                              name: 'project',
+                              params: { slug: nextHomepageProjectFeatured.slug }
+                            }"
+                            class="btn btn-link btn-icon"
+                          >
+                            <span>Learn More</span>
+                          </router-link>
+                        </div>
+                        <div class="projectby">
+                          <span>Project by</span>
+                          <router-link :to="{
+                      name: 'User Profile',
+                      params: { slug: nextHomepageProjectFeatured.creator.login }
+                    }">
+                            <img
+                              :src="nextHomepageProjectFeatured.creatorUserProfilePhotoImageProps.image_url"
+                              alt=""
+                              class="rounded-circle"
+                            />
+                          </router-link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h4 v-if="gigsHomeTab === 3">Gigs tab 3</h4>
+<!--            <div class="tab-content" v-if="gigsHomeTab == 3">-->
+<!--              <div class="row">-->
+<!--                <div-->
+<!--                  class="col-lg-3 col-sm-6 col-sm-12"-->
+<!--                  v-for="nextHomepageProjectPopular in homepageProjectsPopular.slice(0, 4)"-->
+<!--                  :key="nextHomepageProjectPopular.id"-->
+<!--                >-->
+<!--                  <div class="card card-project">-->
+<!--                    <div class="card-img-top">-->
+<!--                      <router-link-->
+<!--                        class="link-hover"-->
+<!--                        :to="{-->
+<!--                          name: 'project',-->
+<!--                          params: { slug: nextHomepageProjectPopular.slug }-->
+<!--                        }"-->
+<!--                      >-->
+<!--                        <img-->
+<!--                          :src="-->
+<!--                            nextHomepageProjectPopular.projectImagePropsArray-->
+<!--                              .image_url || `${publicPath}no-image.jpg`-->
+<!--                          "-->
+<!--                          :alt="-->
+<!--                            nextHomepageProjectPopular.projectImagePropsArray-->
+<!--                              .info-->
+<!--                          "-->
+<!--                        />-->
+<!--                      </router-link>-->
+<!--                    </div>-->
+<!--                    <div class="card-body">-->
+<!--                      <div class="card-title-vote">-->
+<!--                        <div class="card-title">-->
+<!--                          <router-link-->
+<!--                            :to="{-->
+<!--                              name: 'project',-->
+<!--                              params: { slug: nextHomepageProjectPopular.slug }-->
+<!--                            }"-->
+<!--                          >-->
+<!--                            {{ nextHomepageProjectPopular.name }}-->
+<!--                          </router-link>-->
+<!--                        </div>-->
+<!--                        <button-->
+<!--                          class="btn btn-link btn-icon btn-vote"-->
+<!--                          v-show="!nextHomepageProjectPopular.is_already_voted"-->
+<!--                          @click.prevent="-->
+<!--                            voteProject(nextHomepageProjectPopular.id)-->
+<!--                          "-->
+<!--                        >-->
+<!--                          <icon-base-->
+<!--                            width="18"-->
+<!--                            height="17.25"-->
+<!--                            view-box="0 0 18 17.25"-->
+<!--                            icon-name="like-4"-->
+<!--                          >-->
+<!--                            <icon-like-4 />-->
+<!--                          </icon-base>-->
+<!--                        </button>-->
+<!--                        <span-->
+<!--                          class="btn btn-link btn-icon"-->
+<!--                          v-show="nextHomepageProjectPopular.is_already_voted"-->
+<!--                        >-->
+<!--                          <icon-base-->
+<!--                            width="18"-->
+<!--                            height="17.25"-->
+<!--                            view-box="0 0 18 17.25"-->
+<!--                            icon-name="like-5"-->
+<!--                          >-->
+<!--                            <icon-like-5 />-->
+<!--                          </icon-base>-->
+<!--                        </span>-->
+<!--                      </div>-->
+<!--                      <div class="card-category">-->
+<!--                        <div class="label">-->
+<!--                          <router-link to="/">Music Category</router-link>-->
+<!--                        </div>-->
+<!--                      </div>-->
+
+<!--                      <p class="card-text" style="height: 100px">-->
+<!--                        <span-->
+<!--                          v-html="nextHomepageProjectPopular.short_desc"-->
+<!--                        ></span>-->
+<!--                      </p>-->
+<!--                      <div class="card-price-more">-->
+<!--                        <div class="more">-->
+<!--                          <router-link-->
+<!--                            :to="{-->
+<!--                              name: 'project',-->
+<!--                              params: { slug: nextHomepageProjectPopular.slug }-->
+<!--                            }"-->
+<!--                            class="btn btn-link btn-icon"-->
+<!--                          >-->
+<!--                            <span>Learn More</span>-->
+<!--                            <icon-base-->
+<!--                              width="18"-->
+<!--                              height="8.72"-->
+<!--                              view-box="0 0 18 8.72"-->
+<!--                              icon-name="arrow-right"-->
+<!--                            >-->
+<!--                              <icon-arrow-right />-->
+<!--                            </icon-base>-->
+<!--                          </router-link>-->
+<!--                        </div>-->
+<!--                        <div class="projectby">-->
+<!--                          <span>Project by</span>-->
+<!--                          <router-link :to="{-->
+<!--                      name: 'User Profile',-->
+<!--                      params: { slug: nextHomepageProjectFeatured.creator.login }-->
+<!--                    }">-->
+<!--                            <img-->
+<!--                              :src="nextHomepageProjectFeatured.creatorUserProfilePhotoImageProps.image_url"-->
+<!--                              alt=""-->
+<!--                              class="rounded-circle"-->
+<!--                            />-->
+<!--                          </router-link>-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+          </div>
+
+          <div class="view-all">
+            <router-link :to="{ name: 'projects' }">View All</router-link>
+          </div>
+        </div>
+        <div class="section-bg"></div>
+      </section>
+
+      <!-- Background text -->
+      <section
+        class="section-home-info"
+        :style="{ backgroundImage: `url(${publicPath}home-info-bg.jpg)` }"
+      >
+        <div class="container">
+          <p v-html="homepageTheSiteAreGroupBlockHeaderText"></p>
+        </div>
+      </section>
+
+      <!-- Books -->
+      <section class="section-books">
+        <div class="container">
+          <h2 class="h1">Education</h2>
+
+          <p class="desc" v-html="homepageEducationBlockHeaderText"></p>
+
+          <ul class="nav nav-ctabs">
+            <li
+              class="nav-link"
+              :class="booksHomeTab == 1 ? 'active' : ''"
+              @click="booksHomeTab = 1"
+            >
+              Newest
+            </li>
+            <!-- <li
+              class="nav-link"
+              :class="booksHomeTab == 2 ? 'active' : ''"
+              @click="booksHomeTab = 2"
+            >
+              Featured
+            </li> -->
+            <!-- <li
+              class="nav-link"
+              :class="booksHomeTab == 2 ? 'active' : ''"
+              @click="booksHomeTab = 2"
+            >
+              Popular
+            </li> -->
+          </ul>
+
+          <div class="tabs-content">
+            <div class="tab-content" v-if="booksHomeTab == 1">
+              <div class="row">
+                <div class="col-lg-3 col-sm-6" v-for="educationBook in educationBooks"
+                     :key="educationBook.id">
+                  <div class="bcard">
+                    <div class="bcard-img-top">
+                      <router-link to="/">
+                        <img style="height: 420px !important; object-fit: cover"
+                             :src="educationBook.educationOtherArticleItemImageProps?educationBook.educationOtherArticleItemImageProps.image_url:'${publicPath}book-1.jpg'"
+                             alt="" />
+                      </router-link>
+                    </div>
+                    <div class="bcard-body">
+                      <div class="bcard-title">
+                        <router-link to="/">{{ educationBook.title }}</router-link>
+                      </div>
+
+                      <p class="bcard-text" style="height: 100px !important;">
+                        {{ educationBook.short_desc.substring(0, 150) }}
+                      </p>
+                      <a v-bind:href="educationBook.educationOtherArticleItemBookProps.book_url"
+                         class="btn btn-outline-secondary btn-sm" target="_blank"
+                      >Download
+                      </a>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="tab-content" v-if="booksHomeTab == 2">
+              <div class="row">
+                <div class="col-lg-3 col-sm-6">
+                  <div class="bcard">
+                    <div class="bcard-img-top">
+                      <router-link to="/books">
+                        <img :src="`${publicPath}book-1.jpg`" alt="" />
+                      </router-link>
+                    </div>
+                    <div class="bcard-body">
+                      <div class="bcard-title">
+                        <router-link to="/books">Book name</router-link>
+                      </div>
+
+                      <p class="bcard-text">
+                        Lorem ipsum dolor sit amet, adipiscing elit. Fringilla
+                        habitant eu
+                      </p>
+                      <router-link
+                        to="/books"
+                        class="btn btn-outline-secondary btn-sm"
+                      >Download
+                      </router-link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content" v-if="booksHomeTab == 3">
+              <div class="row">
+                <div class="col-lg-3 col-sm-6">
+                  <div class="bcard">
+                    <div class="bcard-img-top">
+                      <router-link to="/books">
+                        <img :src="`${publicPath}book-1.jpg`" alt="" />
+                      </router-link>
+                    </div>
+                    <div class="bcard-body">
+                      <div class="bcard-title">
+                        <router-link to="/books">Book name</router-link>
+                      </div>
+
+                      <p class="bcard-text">
+                        Lorem ipsum dolor sit amet, adipiscing elit. Fringilla
+                        habitant eu
+                      </p>
+                      <router-link
+                        to="/books"
+                        class="btn btn-outline-secondary btn-sm"
+                      >Download
+                      </router-link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="view-all">
+            <router-link :to="{ name: 'education' }">View All</router-link>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gigs -->
+      <section class="section-gigs section-gigs-home">
+        <div class="container">
+          <h2 class="h1">Products</h2>
+          <p class="desc" v-html="homepageGigsListingBlockHeaderText"></p>
+          <ul class="nav nav-ctabs">
+            <li
+              class="nav-link"
+              :class="gigsHomeTab == 1 ? 'active' : ''"
+              @click="gigsHomeTab = 1"
+            >
+              Newest
+            </li>
+            <li
+              class="nav-link"
+              :class="gigsHomeTab == 2 ? 'active' : ''"
+              @click="gigsHomeTab = 2"
+            >
+              Featured
+            </li>
+            <li
+              class="nav-link"
+              :class="gigsHomeTab == 3 ? 'active' : ''"
+              @click="gigsHomeTab = 3"
+            >
+              Popular
+            </li>
+          </ul>
+
+          <div class="tabs-content">
+            <div class="tab-content" v-if="gigsHomeTab == 1">
+              <div class="row">
+                <div
+                  class="col-lg-3 col-sm-6 col-sm-12"
+                  v-for="nextHomepageProject in homepageProjects.slice(0, 4)"
+                  :key="nextHomepageProject.id"
+                >
+                  <div class="card card-project">
+                    <div class="card-img-top">
+                      <router-link
+                        class="link-hover"
+                        :to="{
+                          name: 'project',
+                          params: { slug: nextHomepageProject.slug }
+                        }"
+                      >
+                        <img
+                          :src="
+                            nextHomepageProject.projectImagePropsArray.image_url || `${publicPath}no-image.jpg`
+                          "
+                          :alt="nextHomepageProject.projectImagePropsArray.info"
+                        />
+                      </router-link>
+                    </div>
+                    <div class="card-body">
+                      <div class="card-title-vote">
+                        <div class="card-title">
+                          <router-link
+                            class="link-hover"
+                            :to="{
+                              name: 'project',
+                              params: { slug: nextHomepageProject.slug }
+                            }"
+                          >
+                            {{ nextHomepageProject.name.substring(0, 20) }}
+                          </router-link>
+                        </div>
+                        <div class="ml-auto" style="min-width: 90px">
+                          <RatingStar :width="14" :height="14" :fill="'#FB8200'"/>
+                          <RatingStar :width="14" :height="14" :fill="'#FB8200'"/>
+                          <RatingStar :width="14" :height="14" :fill="'#FB8200'"/>
+                          <RatingStar :width="14" :height="14" :fill="'#FB8200'"/>
+                          <RatingStar :width="14" :height="14" />
+                        </div>
+                      </div>
+                      <div class="card-category">
+                        <div class="label">
+                          <router-link
+                            :to="{
+                              name: 'projectsByCategory',
+                              params: {
+                                slug: nextHomepageProject.category.slug
+                              }
+                            }"
+                          >
+                            {{ nextHomepageProject.category.title }}
+                          </router-link>
+                        </div>
+                      </div>
+                      <div class="card-category">
+                        <div class="label">
+                          <router-link to="/">{{ nextHomepageProject.categoryname }}</router-link>
+                          <span> | </span>
+                          <router-link to="/">Sub-Category</router-link>
+                        </div>
+                      </div>
+                      <p class="card-text" style="height: 100px">
+                        <span v-html="nextHomepageProject.desc.substring(0, 120)"></span>
+                      </p>
+                      <div class="card-price-more">
+                        <div class="more">
+                          <router-link
+                            :to="{
+                              name: 'project',
+                              params: { slug: nextHomepageProject.slug }
+                            }"
+                            class="btn btn-link btn-icon"
+                          >
+                            <span>Learn More</span>
+                          </router-link>
+                        </div>
+                        <div class="projectby">
+                          <span>Product by</span>
+                          <router-link :to="{
+                      name: 'User Profile',
+                      params: { slug: nextHomepageProject.creator.login }
+                    }">
+                            <img
+                              :src="nextHomepageProject.creatorUserProfilePhotoImageProps.image_url"
+                              alt=""
+                              class="rounded-circle"
+                            />
+                          </router-link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content" v-if="gigsHomeTab == 2">
+              <div class="row">
+                <div
+                  class="col-lg-3 col-sm-6 col-sm-12"
+                  v-for="nextHomepageProjectFeatured in homepageProjectsFeatured.slice(0, 4)"
+                  :key="nextHomepageProjectFeatured.id"
+                >
+                  <div class="card card-project">
+                    <div class="card-img-top">
+                      <router-link
+                        class="link-hover"
+                        :to="{
+                          name: 'project',
+                          params: { slug: nextHomepageProjectFeatured.slug }
+                        }"
+                      >
+                        <img
+                          :src="
+                            nextHomepageProjectFeatured.projectImagePropsArray
+                              .image_url || `${publicPath}no-image.jpg`
+                          "
+                          :alt="
+                            nextHomepageProjectFeatured.projectImagePropsArray
+                              .info
+                          "
+                        />
+                        <span
+                          class="is-featured"
+                          :style="{
+                            backgroundImage: `url(${publicPath}featured-bg.png)`
+                          }"
+                        >Featured</span
+                        >
+                      </router-link>
+                    </div>
+                    <div class="card-body">
+                      <div class="card-title-vote">
+                        <div class="card-title">
+                          <router-link
+                            class="link-hover"
+                            :to="{
+                              name: 'project',
+                              params: { slug: nextHomepageProjectFeatured.slug }
+                            }"
+                          >
+                            {{ nextHomepageProjectFeatured.name }}
+                          </router-link>
+                        </div>
+                        <div class="ml-auto" style="min-width: 90px">
+                          <RatingStar :width="14" :height="14" :fill="'#FB8200'"/>
+                          <RatingStar :width="14" :height="14" :fill="'#FB8200'"/>
+                          <RatingStar :width="14" :height="14" :fill="'#FB8200'"/>
+                          <RatingStar :width="14" :height="14" :fill="'#FB8200'"/>
+                          <RatingStar :width="14" :height="14" />
+                        </div>
+                      </div>
+                      <div class="card-category">
+                        <div class="label">
+                          <router-link to="/">Music Category</router-link>
+                          <span> | </span>
+                          <router-link to="/">Sub-Category</router-link>
+                        </div>
+                      </div>
+
+                      <p class="card-text" style="height: 100px">
+                        <span
+                          v-html="nextHomepageProjectFeatured.short_desc"
+                        ></span>
+                      </p>
+
+                      <div class="card-price-more">
+                        <div class="more">
+                          <router-link
+                            :to="{
+                              name: 'project',
+                              params: { slug: nextHomepageProjectFeatured.slug }
+                            }"
+                            class="btn btn-link btn-icon"
+                          >
+                            <span>Learn More</span>
+                          </router-link>
+                        </div>
+                        <div class="projectby">
+                          <span>Product by</span>
+                          <router-link :to="{
+                      name: 'User Profile',
+                      params: { slug: nextHomepageProjectFeatured.creator.login }
+                    }">
+                            <img
+                              :src="nextHomepageProjectFeatured.creatorUserProfilePhotoImageProps.image_url"
+                              alt=""
+                              class="rounded-circle"
+                            />
+                          </router-link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content" v-if="gigsHomeTab == 3">
+              <div class="row">
+                <div
+                  class="col-lg-3 col-sm-6 col-sm-12"
+                  v-for="nextHomepageProjectPopular in homepageProjectsPopular.slice(0, 4)"
+                  :key="nextHomepageProjectPopular.id"
+                >
+                  <div class="card card-project">
+                    <div class="card-img-top">
+                      <router-link
+                        :to="{
+                          name: 'project',
+                          params: { slug: nextHomepageProjectPopular.slug }
+                        }"
+                      >
+                        <img
+                          :src="
+                            nextHomepageProjectPopular.projectImagePropsArray
+                              .image_url || `${publicPath}no-image.jpg`
+                          "
+                          :alt="
+                            nextHomepageProjectPopular.projectImagePropsArray
+                              .info
+                          "
+                        />
+                      </router-link>
+                    </div>
+                    <div class="card-body">
+                      <div class="card-title-vote">
+                        <div class="card-title">
+                          <router-link
+                            class="link-hover"
+                            :to="{
+                              name: 'project',
+                              params: { slug: nextHomepageProjectPopular.slug }
+                            }"
+                          >
+                            {{ nextHomepageProjectPopular.name }}
+                          </router-link>
+                        </div>
+                        <button
+                          class="btn btn-link btn-icon btn-vote"
+                          v-show="!nextHomepageProjectPopular.is_already_voted"
+                          @click.prevent="
+                            voteProject(nextHomepageProjectPopular.id)
+                          "
+                        >
+                          <icon-base
+                            width="18"
+                            height="17.25"
+                            view-box="0 0 18 17.25"
+                            icon-name="like-4"
+                          >
+                            <icon-like-4 />
+                          </icon-base>
+                        </button>
+                        <span
+                          class="btn btn-link btn-icon"
+                          v-show="nextHomepageProjectPopular.is_already_voted"
+                        >
+                          <icon-base
+                            width="18"
+                            height="17.25"
+                            view-box="0 0 18 17.25"
+                            icon-name="like-5"
+                          >
+                            <icon-like-5 />
+                          </icon-base>
+                        </span>
+                      </div>
+                      <div class="card-category">
+                        <div class="label">
+                          <router-link to="/">Music Category</router-link>
+                        </div>
+                      </div>
+
+                      <p class="card-text" style="height: 100px">
+                        <span
+                          v-html="nextHomepageProjectPopular.short_desc"
+                        ></span>
+                      </p>
+                      <div class="card-price-more">
+                        <div class="more">
+                          <router-link
+                            :to="{
+                              name: 'project',
+                              params: { slug: nextHomepageProjectPopular.slug }
+                            }"
+                            class="btn btn-link btn-icon"
+                          >
+                            <span>Learn More</span>
+                            <icon-base
+                              width="18"
+                              height="8.72"
+                              view-box="0 0 18 8.72"
+                              icon-name="arrow-right"
+                            >
+                              <icon-arrow-right />
+                            </icon-base>
+                          </router-link>
+                        </div>
+                        <div class="projectby">
+                          <span>Product by</span>
+                          <router-link :to="{
+                      name: 'User Profile',
+                      params: { slug: nextHomepageProjectFeatured.creator.login }
+                    }">
+                            <img
+                              :src="nextHomepageProjectFeatured.creatorUserProfilePhotoImageProps.image_url"
+                              alt=""
+                              class="rounded-circle"
+                            />
+                          </router-link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="view-all">
+            <router-link :to="{ name: 'projects' }">View All</router-link>
+          </div>
+        </div>
+        <div class="section-bg"></div>
+      </section>
+    </main>
+
+    <Footer />
+  </div>
+</template>
+
+<script>
+import Vue from "vue";
+import VueTagsInput from "@johmun/vue-tags-input";
+import vSelect from "vue-select";
+import appMixin from "../appMixin";
+import Paginate from "vuejs-paginate";
+import Header from "./common/Header.vue";
+import Footer from "./common/Footer.vue";
+import IconBase from "./common/IconBase.vue";
+import IconArrowRight from "./common/icons/IconArrowRight.vue";
+import IconTriangle3 from "./common/icons/IconTriangle3.vue";
+import IconStars from "./common/icons/IconStars.vue";
+import IconSearch from "./common/icons/IconSearch.vue";
+import IconLike from "./common/icons/IconLike.vue";
+import IconLike4 from "./common/icons/IconLike4.vue";
+import IconLike5 from "./common/icons/IconLike5.vue";
+import IconAnswers from "./common/icons/IconAnswers.vue";
+import IconViews from "./common/icons/IconViews.vue";
+import RatingStar from "./rebranded/icons/RatingStar";
+
+Vue.component("v-select", vSelect);
+import "vue-select/dist/vue-select.css";
+
+export default {
+  name: "Home",
+  components: {
+    Header,
+    Footer,
+    VueTagsInput,
+    IconBase,
+    IconArrowRight,
+    IconTriangle3,
+    Paginate,
+    IconStars,
+    IconSearch,
+    IconLike,
+    IconLike4,
+    IconLike5,
+    IconAnswers,
+    IconViews,
+    RatingStar
+  },
+
+  mixins: [appMixin],
+
+  data() {
+    return {
+      isAuthenticated: window.isAuthenticated,
+      homepageProjects: [],
+      homepageProjectsNumberOfPages: 0,
+      currentHomepageProjectsPageNum: 1,
+
+      homepageProjectsFeatured: [],
+      homepageProjectsFeaturedNumberOfPages: 0,
+      totalHomepageProjectsFeaturedCount: 0,
+      currentHomepageProjectsFeaturedPageNum: 1,
+
+      homepageProjectsPopular: [],
+      homepageProjectsPopularNumberOfPages: 0,
+      totalHomepageProjectsPopularCount: 0,
+      currentHomepageProjectsPopularPageNum: 1,
+
+      homepageProjectsListingBlockHeaderText: "",
+      homepageGigsListingBlockHeaderText: "",
+      homepageCommunityListingBlockHeaderText: "",
+      homepageJoinOurCommunityBlockHeaderText: "",
+      homepageEducationBlockHeaderText: "",
+      homepageTheSiteAreGroupBlockHeaderText: "",
+      communityPopularQuestions: [],
+      communityNewQuestions: [],
+      educationBooks: [],
+      searchServiceTag: "",
+      searchServiceTags: [],
+      autocompleteServiceTags: [
+        {
+          text: "OBS Setup"
+        },
+        {
+          text: "Twitch Channel Setup"
+        },
+        {
+          text: "Tech Support"
+        },
+        {
+          text: "vMix Setup"
+        },
+        {
+          text: "Lorem ipsum dolor"
+        },
+        {
+          text: "Service sit amet consectetur"
+        },
+        {
+          text: "NDI Configuration"
+        }
+      ],
+      searchServiceCategory: "",
+      searchServiceCategories: [
+        {
+          label: "Category 1"
+        },
+        {
+          label: "Category 2"
+        },
+        {
+          label: "Category 3"
+        }
+      ],
+
+      projectsHomeTab: 1,
+      gigsHomeTab: 1,
+      booksHomeTab: 1,
+      communityHomeTab: 1,
+      publicPath: local_image_path
+    };
+  },
+  created() {
+    document.title = this.$route.meta.title;
+  },
+  mounted() {
+    this.loadProjects(1);
+    this.loadProjectsFeatured(1);
+    this.loadProjectsPopular(1);
+    this.loadCommunityPopularQuestions();
+    this.loadCommunityNewQuestions();
+    this.loadeducationBooks();
+
+    this.loadCMSItemByKey("projects_listing_block_header");
+    this.loadCMSItemByKey("gigs_listing_block_header");
+    this.loadCMSItemByKey("community_listing_block_header");
+    this.loadCMSItemByKey("join_our_community_block_header");
+    this.loadCMSItemByKey("education_block_header");
+    this.loadCMSItemByKey("the_site_are_group_block_header");
+  }, // mounted() {
+
+  methods: {
+    async voteCommunity(community_id) {
+      if (!this.isAuthenticated || !localStorage.getItem("logged_user_id")) {
+        this.$toast.error("To vote you need to login firstly !");
+        return;
+      }
+
+      for (let i = 0; i < this.communitiesList.length; i++) {
+        if (
+          this.communitiesList[i].id == community_id &&
+          this.communitiesList[i].is_already_voted
+        ) {
+          this.$toast.warning("You have already voted for this community !");
+          return;
+        }
+      }
+
+      const result = await this.callApi(
+        "post",
+        window.api_path + "voteCommunity",
+        {
+          community_id: community_id,
+          user_id: localStorage.getItem("logged_user_id")
+        }
+      );
+
+      let self = this;
+      if (result.status == 200) {
+        self.$toast.success(result.data.message);
+        for (let i = 0; i < self.communitiesList.length; i++) {
+          if (self.communitiesList[i].id == community_id) {
+            self.communitiesList[i].user_community_vote_count++;
+            self.communitiesList[i].is_already_voted = true;
+            break;
+          }
+        }
+        return;
+      }
+      this.$toast.error(result.data.message);
+    }, // async voteProject(project_id) {
+    async searchTags(tag, id) {
+      //this.searchServiceTag = tag;
+      this.searchServiceTags = [{ text: tag, id: id, tiClasses: ["ti-valid"] }];// [{text: tag, id: 7}];
+      this.loadCommunitiesList(1);
+    },
+    async loadCMSItemByKey(CMSItemKey) {
+      const result = await this.callApi(
+        "post",
+        window.api_path + "getBlockCMSItem",
+        {
+          key: CMSItemKey
+        }
+      );
+
+      if (CMSItemKey == "projects_listing_block_header") {
+        this.homepageProjectsListingBlockHeaderText = result.data.cMSItem.text;
+      }
+      if (CMSItemKey == "gigs_listing_block_header") {
+        this.homepageGigsListingBlockHeaderText = result.data.cMSItem.text;
+      }
+      if (CMSItemKey == "community_listing_block_header") {
+        this.homepageCommunityListingBlockHeaderText = result.data.cMSItem.text;
+      }
+      if (CMSItemKey == "join_our_community_block_header") {
+        this.homepageJoinOurCommunityBlockHeaderText = result.data.cMSItem.text;
+      }
+      if (CMSItemKey == "education_block_header") {
+        this.homepageEducationBlockHeaderText = result.data.cMSItem.text;
+      }
+      if (CMSItemKey == "the_site_are_group_block_header") {
+        this.homepageTheSiteAreGroupBlockHeaderText = result.data.cMSItem.text;
+      }
+    }, // loadCMSItemByKey() {
+
+    async loadProjects(pageNum) {
+      const result = await this.callApi(
+        "post",
+        window.api_path + "getFilteredProjects",
+        {
+          page: pageNum
+        }
+      );
+      this.currentHomepageProjectsPageNum = pageNum;
+      this.homepageProjectsNumberOfPages = result.data.numberOfPages;
+      this.homepageProjects = result.data.projects;
+      // console.log("this.homepageProjects::");
+      // console.log(this.homepageProjects);
+    }, // async loadProjects(pageNum) {
+
+    async loadProjectsFeatured(pageNum) {
+      const result = await this.callApi(
+        "post",
+        window.api_path + "getFilteredProjects",
+        {
+          page: pageNum,
+          data_type: "Featured"
+        }
+      );
+      this.currentHomepageProjectsFeaturedPageNum = pageNum;
+      this.homepageProjectsFeaturedNumberOfPages = result.data.numberOfPages;
+      this.homepageProjectsFeatured = result.data.projects;
+    }, // async loadProjectsFeatured(pageNum) {
+
+    async loadProjectsPopular(pageNum) {
+      const result = await this.callApi(
+        "post",
+        window.api_path + "getFilteredProjects",
+        {
+          page: pageNum,
+          data_type: "Popular"
+        }
+      );
+
+      this.currentHomepageProjectsPopularPageNum = pageNum;
+      this.homepageProjectsPopularNumberOfPages = result.data.numberOfPages;
+      this.homepageProjectsPopular = result.data.projects;
+    }, // async loadProjectsPopular(pageNum) {
+
+    async voteProject(project_id) {
+      if (!this.isAuthenticated || !localStorage.getItem("logged_user_id")) {
+        this.$toast.error("To vote you need to login firstly !");
+        return;
+      }
+      const result = await this.callApi(
+        "post",
+        window.api_path + "voteProject",
+        {
+          project_id: project_id,
+          user_id: localStorage.getItem("logged_user_id")
+        }
+      );
+      let self = this;
+      if (result.status == 200) {
+        self.$toast.success(result.data.message);
+        self.homepageProjects.forEach(function(nextHomepageProject, index) {
+          if (nextHomepageProject.id == project_id) {
+            self.homepageProjects[index].is_already_voted = true;
+          }
+        });
+        self.homepageProjectsPopular.forEach(function(
+          nextHomepageProjectPopular,
+          index
+        ) {
+          if (nextHomepageProjectPopular.id == project_id) {
+            self.homepageProjectsPopular[index].is_already_voted = true;
+          }
+        });
+        self.homepageProjectsFeatured.forEach(function(
+          nextHomepageProjectFeatured,
+          index
+        ) {
+          if (nextHomepageProjectFeatured.id == project_id) {
+            self.homepageProjectsFeatured[index].is_already_voted = true;
+          }
+        });
+        return;
+      }
+      this.$toast.error(result.data.message);
+    },
+    async loadCommunityPopularQuestions() {
+      const result = await this.callApi(
+        "get",
+        window.api_path + "community/getPopularQuestions",
+        {}
+      );
+      if (result.status != 200) {
+        this.$toast.error(result.data.message);
+        this.communityPopularQuestions = [];
+        return;
+      }
+
+      this.communityPopularQuestions = result.data.communityPopularQuestions;
+    },
+    async loadCommunityNewQuestions() {
+      const result = await this.callApi(
+        "get",
+        window.api_path + "community/getNewQuestions",
+        {}
+      );
+      if (result.status != 200) {
+        this.$toast.error(result.data.message);
+        this.communityNewQuestions = [];
+        return;
+      }
+
+      this.communityNewQuestions = result.data.communityNewQuestions;
+    }, async loadeducationBooks() {
+      const result = await this.callApi(
+        "get",
+        window.api_path + "education/homelisting",
+        {}
+      );
+      if (result.status != 200) {
+        this.$toast.error(result.data.message);
+        this.educationBooks = [];
+        return;
+      }
+
+      this.educationBooks = result.data.educationAlsoLikeBooks;
+    }
+  }, // methods: {
+  computed: {
+    filteredTags() {
+      return this.autocompleteServiceTags.filter(i => {
+        return (
+          i.text.toLowerCase().indexOf(this.searchServiceTag.toLowerCase()) !==
+          -1
+        );
+      });
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.card-project {
+  height: 100%;
+  margin-bottom: 0px;
+  background: #202C54;
+  box-shadow: 0px 4px 26px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  .card-title {
+    margin-bottom: 0;
+    a {
+      color: #FFFFFF;
+    }
+  }
+  .card-text {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .more {
+    a {
+      color: white;
+      border: 1px solid #F2A91C;
+      border-radius: 5px;
+      width: 107px;
+      height: 31px;
+      margin: 10px 0;
+      &:hover {
+        color: white !important;
+        background: #F2A91C;
+      }
+    }
+  }
+  .projectby {
+    span {
+      color: white !important;
+    }
+  }
+}
+</style>
