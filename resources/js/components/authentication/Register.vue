@@ -15,10 +15,18 @@
                             <div class="or-divider">
                                 <span>OR</span>
                             </div>
-                            <div class="row cstm-form form-border login-form" method="post">
+                            <!-- <div class="row cstm-form form-border login-form" @submit.prevent="submitForm" method="post"> -->
+                            <Form class="row cstm-form form-border login-form" @submit="submitForm">
+                              <div :class="{ error: v$.fname.$errors.length }">
+                                <input v-model="formData.fname">
+                                <div class="input-errors" v-for="error of v$.fname.$errors" :key="error.$uid">
+                                  <div class="error-msg">{{ error.$message }}</div>
+                                </div>
+                              </div>
+
                                 <div class="col-12 col-md-6 ">
                                     <div class="form-group">
-                                      <input type="text" class="form-control" v-model="registerform.fname" placeholder="First Name">
+                                      <input type="text" class="form-control" v-model="registerform.fname" placeholder="First Name"/>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
@@ -57,10 +65,11 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="login-button w-100">
-                                      <button type="submit" class="btn btn-pink w-100 hover-btn" @click="doregister">Register</button>
+                                      <button type="submit" class="btn btn-pink w-100 hover-btn">Register</button>
+                                      <button type="submit" class="btn btn-pink w-100 hover-btn" @click="submitForm">Register</button>
                                     </div>
                                 </div>
-                              </div>
+                            </Form>
                             <div class="row">
                                 <div class="col-12">
                                     <div class="login-footer text-center">
@@ -99,17 +108,59 @@
 </template>
 
 <script>
+    import axios from 'axios';
     import {reactive,ref} from 'vue'
+    //Validate.
+    // import Vuelidate from 'vuelidate'
+    import { useVuelidate } from '@vuelidate/core'
+    import {required } from "@vuelidate/validators" 
+    // import { required, email } from "vuelidate/lib/validators";
+    // import { required, minLength } from 'vuelidate/lib/validators'
+
     //Toaster notification
     import { useToast } from "vue-toastification";
     import "vue-toastification/dist/index.css" 
     
+    import { Form } from 'vee-validate';
+
     export default {
         name: "Register",
         setup(){
+          const rules = {
+            fname:{required},
+          };
+          
+          const formData = reactive({
+            fname: "",
+            lname:"",
+            role:"0",
+            phone_number:"",
+            email: "",
+            password: "",
+            cpassword: "",
+          });
+          const v$= useVuelidate(rules,formData);
+
+          return { formData, v$ }
+
+          const doregister = (values, actions) =>{
+            alert('test');
+            return false;
+          };
+
+          const submitForm = async () => {
+            const result =await v$.value.$validate();
+            console.log(result);
+            if(result){
+              alert('Success, form submitted,');
+            }else{
+              alert('Failed, form submitted,');
+            }
+          }
         },
         data(){
             return {
+                v$: useVuelidate(),
                 signupBackgroundImg: "",
                 registerform: {
                     fname: "",
@@ -123,61 +174,73 @@
                 }
             }   
         },
-        methods:{
-            async doregister() {
-              // Get toast interface
-              const toast = useToast();
+        validations() {
 
-              if (this.registerform.fname == "") {
-                toast.error('Please enter First name');
-                return false;
-              }
-              else if (this.registerform.lname == "") {
-                toast.error('Please enter Last name')
-                return false;
-              }
-              else if (this.registerform.role == "" || this.registerform.role == 0) {
-                toast.error('Please select role')
-                return false;
-              }
-              else if (this.registerform.phone_number == "") {
-                toast.error('Please enter phone number')
-                return false;
-              }
-              else if (this.registerform.email == "") {
-                toast.error('Please enter email')
-                return false;
-              }
-              else if (this.registerform.password == "") {
-                toast.error('Please enter password')
-                return false;
-              }
-              else if (this.registerform.confirm_pass == "") {
-                toast.error('Please enter confirm password')
-                return false;
-              }
-              else {
-                // do registration
-                alert('Submit//');
-                axios.post('/api/registration',
-                    {
-                        fname:this.registerform.fname,
-                        lname:this.registerform.lname,
-                        email:this.registerform.email,
-                        role:this.registerform.role,
-                        phone_number:this.registerform.phone_number,
-                        password:this.registerform.password,
-                        confirm_pass:this.registerform.confirm_pass,
-                    })
-                    .then((res) => {
-                        console.log(res)
-                        router.push({name: 'Login'})
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                    });
-              }
-            },
+          return {
+            fname: { required }
+            // minLength: minLength(4)
+          }
+        },
+        methods:{
+          async submitForm(){
+            alert('Cal....');
+            console.log(this.v$.$touch)
+            
+          },
+            // async doregister() {
+            //   // Get toast interface
+            //   const toast = useToast();
+
+            //   if (this.registerform.fname == "") {
+            //     toast.error('Please enter First name');
+            //     return false;
+            //   }
+            //   else if (this.registerform.lname == "") {
+            //     toast.error('Please enter Last name')
+            //     return false;
+            //   }
+            //   else if (this.registerform.role == "" || this.registerform.role == 0) {
+            //     toast.error('Please select role')
+            //     return false;
+            //   }
+            //   else if (this.registerform.phone_number == "") {
+            //     toast.error('Please enter phone number')
+            //     return false;
+            //   }
+            //   else if (this.registerform.email == "") {
+            //     toast.error('Please enter email')
+            //     return false;
+            //   }
+            //   else if (this.registerform.password == "") {
+            //     toast.error('Please enter password')
+            //     return false;
+            //   }
+            //   else if (this.registerform.confirm_pass == "") {
+            //     toast.error('Please enter confirm password')
+            //     return false;
+            //   }
+            //   else {
+            //     // do registration
+            //     alert('Submit//');
+            //     axios.post('/api/registration',
+            //         {
+            //             fname:this.registerform.fname,
+            //             lname:this.registerform.lname,
+            //             email:this.registerform.email,
+            //             role:this.registerform.role,
+            //             phone_number:this.registerform.phone_number,
+            //             password:this.registerform.password,
+            //             confirm_pass:this.registerform.confirm_pass,
+            //         })
+            //         .then((res) => {
+            //             console.log(res)
+            //             router.push({name: 'Login'})
+            //         })
+            //         .catch((err) => {
+            //             console.log(err)
+            //         });
+            //   }
+            // },
 
           // return {
           //   doregister

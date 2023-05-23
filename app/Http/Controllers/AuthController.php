@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Auth;
 use DB;
 use Exception;
+use Validator;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -23,6 +25,73 @@ class AuthController extends Controller
         }
         dd($request->all());
         echo 'Login....';
+    }
+
+    public function register(){
+        $validator = Validator::make($request->all(),[
+            'name' => 'requied',
+            'email' => 'requied|email',
+            'password' => 'requied',
+            'c_password' => 'requied|same:password',
+        ]);
+        if($validator->fails()){
+            $response = [
+                'status' => false,
+                'message' => $validator->errors()
+            ];
+            return response()->json($response, 400);
+        }
+
+        $input =  $request->all();
+        $input['password'] = bcrypt($input['password']);
+
+        $user = User::create($input);
+
+        $success['token'] = $user->createToken('MyApp')->plainTextToken;
+        $success['name'] = $user->name;
+        $response = [
+            'success' => true,
+            'data' => $success,
+            'message' => 'User registered successfully.'
+        ];
+    }
+
+    public function login_process(Request $request){
+        $result = User::where(['mobile' => $request->mobile])->first();
+        if($result){
+            $user = Auth::loginUsingId($result->id);
+            $success['token'] = $user->createToken('MyApp')->plainTextToken;
+            $success['name'] = $user->name;
+            $response = [
+                'success' => true,
+                'data' => $success,
+                'message' => 'User registered successfully.'
+            ];
+        }else{
+            $response = [
+                'success' => false,
+                'message' => 'Unauthorised.'
+            ];
+        }
+        return response()->json($response, 200);
+
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+            $user = Auth::user();
+            $success['token'] = $user->createToken('MyApp')->plainTextToken;
+            $success['name'] = $user->name;
+            $response = [
+                'success' => true,
+                'data' => $success,
+                'message' => 'User registered successfully.'
+            ];
+            return response()->json($response, 200);
+        }else{
+            $response = [
+                'success' => false,
+                'message' => 'Unauthorised.'
+            ];
+            return response()->json($response, 200);
+        }
     }
 
     function doRegister(Request $request){

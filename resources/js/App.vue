@@ -18,6 +18,14 @@
                             <li class="nav-item active">
                                 <a class="nav-link" href="index.html">Home</a>
                             </li>
+                            <li class="nav-item">
+                                <router-link to="/dashboard" class="nav-link">Dashboard
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link to="/forgot_password" class="nav-link">forgot_password
+                                </router-link>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">

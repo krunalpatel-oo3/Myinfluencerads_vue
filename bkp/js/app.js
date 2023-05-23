@@ -4,6 +4,10 @@ import VueFormulate from '@braid/vue-formulate'
 import Toast from "vue-toastification";
 import store from './vuex'
 
+import Vuelidate from 'vuelidate'
+import Vue3TouchEvents from "vue3-touch-events";
+
+
 import "vue-toastification/dist/index.css";
 
 import VueRouter from "vue-router";
@@ -21,6 +25,8 @@ Vue.use(Toast, {
 Vue.use(VueRouter);
 Vue.mixin(common);
 Vue.use(VueFormulate);
+Vue.use(Vuelidate)
+Vue.use(Vue3TouchEvents);
 
 
 import VModal from 'vue-js-modal' // https://github.com/euvl/vue-js-modal

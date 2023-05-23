@@ -16,27 +16,23 @@
                                     <p>Welcome back! Please enter your details</p>
                                     <a href="#" class="btn btn-outline  w-100"><img src="../assets/images/icon/google.svg" class="me-3">Log in with Google</a>
                                 </div>
+                                <router-link to="/dashboard" class="nav-link">Dashboard</router-link>
                                 <div class="or-divider">
                                     <span>OR</span>
                                 </div>
                                 <form @submit.prevent="login" class="row cstm-form form-border login-form" method="post">
                                     <div class="col-12">
-                                        <div class="form-group">
-                                          <input type="text" class="form-control" required="" placeholder="Email" v-model="form.email">
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                          <input type="text" class="form-control" required="" placeholder="Password" v-model="form.password">
-                                        </div>
+                                      <div class="form-group">
+                                        <input type="text" class="form-control" required="" placeholder="Mobile" v-model="form.mobile">
+                                      </div>
                                     </div>
                                     <div class="col-6">
-                                        <div class="form-check form-group ps-0">
-                                            <div class="custom-control custom-checkbox mr-sm-2 fp_link">
-                                                <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
-                                                <label class="custom-control-label" for="customControlAutosizing">Keep me logged in</label>
-                                            </div>
-                                          </div>
+                                      <div class="form-check form-group ps-0">
+                                        <div class="custom-control custom-checkbox mr-sm-2 fp_link">
+                                            <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
+                                            <label class="custom-control-label" for="customControlAutosizing">Keep me logged in</label>
+                                        </div>
+                                      </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
@@ -92,7 +88,9 @@
 
 <script>
 import {reactive,ref} from 'vue'
-
+ //Toaster notification
+ import { useToast } from "vue-toastification";
+    import "vue-toastification/dist/index.css" 
 // console.log(window.location.origin);
 
 export default {
@@ -100,35 +98,53 @@ export default {
     data(){
          return {
             defaultUserImgUrl: "",
+
          }   
+    },
+    methods:{
+      async login(){
+        // Get toast interface
+        const toast = useToast();
+        const $v =this.$router;
+        axios.post('/api/login_process',
+        {
+            mobile:this.form.mobile,
+        })
+        .then((res) => {
+          console.log( res.data.data.token)
+            if(res.data.success){
+              localStorage.setItem('token', res.data.data.token);
+              $v.push('/dashboard');
+            }else{
+              toast.error(res.data.message, {'position': 'top-center'});
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+        });
+      }
     },
      setup() {
         let form = reactive({
-            email:'',
-            password:''
+          mobile:'',
         });
 
         let error = ref('');
 
-        const login = async() => {
-            await axios.post('/api/login', form).then(res=>{
-              console.log(res);  
-            })
-            console.log('TES');
-        }
+        // const login = async() => {
+        //   // alert();
+        //     await axios.post('/api/login', form).then(res=>{
+        //       console.log(res);  
+        //     })
+        //     console.log('TES');
+        // }
 
-        return {form,login,error}
+        return {form,error}
      },
      mounted(){
       this.defaultUserImgUrl = "assets/images/auth/signup-bg.jpg";
      },
 }
-//data() {
- //   return {
-   //   phaseData: null, 
-     // showPhase: "",
-    //};
-  //},
 </script>
 
 <style>
