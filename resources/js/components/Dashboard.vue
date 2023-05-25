@@ -15,14 +15,13 @@ import {reactive,ref} from 'vue'
 //import { userRouter } from "vue-router"
     export default{
         setup(){
-            function logouts(){
-                alert('S');   
-            }
+            // function logouts(){
+            //     alert('S');   
+            // }
         },
         methods:{
             async logout(){
                 const $v =this.$router;
-                alert('Cll');
                 localStorage.removeItem('token');
                 $v.push('/login');
             }

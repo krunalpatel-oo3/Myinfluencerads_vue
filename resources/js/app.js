@@ -25,6 +25,7 @@ import Login from './components/authentication/login.vue';
 import Register from './components/authentication/Register.vue';
 import ForgotPassword from './components/authentication/ForgotPassword.vue';
 import Dashboard from './components/Dashboard.vue';
+import Manage_Profile from './components/dashboard/manage_profile.vue';
 
 const origin = 'http://127.0.0.1:8000/';
 
@@ -46,6 +47,7 @@ const router = createRouter({
         { path: '/register', component: Register,meta:{  hideNavbar: true} },
         { path: '/forgot_password', component: ForgotPassword,meta:{  hideNavbar: true,requireAuth: false} },
         { path: '/dashboard', component: Dashboard,meta:{ hideNavbar: false,requireAuth: true}},
+        { path: '/manage-profile', component: Manage_Profile,meta:{ hideNavbar: false,requireAuth: true}},
         // { path: '/products/:id/edit', component: ProductForm },
     ]
 });

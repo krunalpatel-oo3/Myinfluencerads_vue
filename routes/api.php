@@ -24,3 +24,4 @@ Route::controller(AuthController::class)->group(function(){
 });
 
 Route::post('/registration', [AuthController::class, 'doRegister']);
+Route::get('/user-info', [AuthController::class, 'userInfo']);

@@ -23,7 +23,7 @@
                                 </router-link>
                             </li>
                             <li class="nav-item">
-                                <router-link to="/forgot_password" class="nav-link">forgot_password
+                                <router-link to="/manage-profile" class="nav-link">Manage profile
                                 </router-link>
                             </li>
                             <li class="nav-item dropdown">

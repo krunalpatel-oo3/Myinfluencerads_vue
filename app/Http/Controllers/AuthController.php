@@ -118,6 +118,15 @@ class AuthController extends Controller
         echo 'Login....';
     }
 
+    public function userInfo(Request $request){
+        $uid = Auth::user()->id;
+        if(!empty($uid)){
+            $response['status'] = true;
+            $response['data'] = Auth::user();
+            return $response;
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      */
