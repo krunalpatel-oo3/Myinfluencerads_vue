@@ -43,7 +43,9 @@
                                     </div>
                                     <div class="col-12">
                                         <div class="login-button w-100">
-                                          <input type="submit" class="btn btn-pink w-100 hover-btn">
+                                          <button type="submit" class="btn btn-pink w-100 hover-btn" :disabled="processing" >
+                                          Submit  
+                                          </button>
                                         </div>
                                     </div>
                                 </form>
@@ -85,7 +87,6 @@
         </div>
       </div>
 </template>
-
 <script>
 import {reactive,ref} from 'vue'
  //Toaster notification
@@ -97,12 +98,15 @@ export default {
     name: "Header",
     data(){
          return {
-            defaultUserImgUrl: "",
-
+          defaultUserImgUrl: "",
+          isLoading: false,
+          processing: false
          }   
     },
     methods:{
       async login(){
+        this.isLoading =  this.processing = true;
+
         // Get toast interface
         const toast = useToast();
         const $v =this.$router;
@@ -111,15 +115,17 @@ export default {
             mobile:this.form.mobile,
         })
         .then((res) => {
-          console.log( res.data.data.token)
+          console.log( res.data)
             if(res.data.success){
               localStorage.setItem('token', res.data.data.token);
               $v.push('/dashboard');
             }else{
+              this.isLoading = this.processing =  false;
               toast.error(res.data.message, {'position': 'top-center'});
             }
         })
         .catch((err) => {
+          this.isLoading =  this.processing = false;
             console.log(err)
         });
       }
