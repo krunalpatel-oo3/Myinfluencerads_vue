@@ -8,7 +8,7 @@ use DB;
 use Exception;
 use Validator;
 use App\Models\User;
-
+use DataTables;
 class AuthController extends Controller
 {
     /**
@@ -174,7 +174,26 @@ class AuthController extends Controller
     {
         //
     }
+    public function userDetails(Request $request){
+        // dd($request->all());
+        // // $users = User::select('id','name', 'email', 'mobile')->first();
+        // $users = User::latest()->get();
+        // // return  response()->json(['user' => $users]);
+        // return Datatables::of($users)
+        //         ->addIndexColumn()
+        //         ->addColumn('action', function($row){
+        //             $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
+        //             return $actionBtn;
+        //         })
+        //         ->rawColumns(['action'])
+        //         ->make(true);
 
+        // // return  response()->json($users);
+        $users = User::select('id', 'name', 'mobile');
+
+        return datatables($users)->make(true);
+
+    }
     public function logout(){
         $user = Auth::user();
         // dd($user);
