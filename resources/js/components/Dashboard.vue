@@ -8,19 +8,21 @@
                     <div class="col-lg-12">
                         <div class="table-responsive">
                             <DataTable 
-                            :data="users"
-                             :columns="columns" class="table table-striped table-bordered display" :options="{responsive:true, autowidth:false, dom:'Bfrtip'}">
+                            
+                             :columns="columns"
+                             ajax="api/users"
+                             class="table table-striped table-bordered display" :options="{ responsive:true, autowidth:false, dom:'Bfrtip'}">
                                 <thead>
                                     <tr>
                                         <th>#</th>
                                         <th>No</th>
                                         <th>Desc</th>
-                                        <th>REP</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
 
                             </DataTable>
-                            
+                            <ChildComponent :callMethod="parentCall" :childCall="childCall" ref="post" />
                         </div>
                     </div>
                 </div>
@@ -39,19 +41,22 @@ import ButtonsHTml5 from 'datatables.net-buttons/js/buttons.html5';
 import print from 'datatables.net-buttons/js/buttons.print';
 import pdfmake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+
+
 import 'datatables.net-responsive-bs5';
 import JsZip from 'jszip';
 window.JsZip = JsZip;
 DataTable.use(DataTableLib);
 DataTable.use(pdfmake);
 DataTable.use(ButtonsHTml5);
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 import {reactive,ref} from 'vue'
 //import { userRouter } from "vue-router"
 //Toaster notification
 import { useToast } from "vue-toastification";
 import "vue-toastification/dist/index.css" 
-
+import ChildComponent from "./ChildComponent.vue";
 
 // import  'https://code.jquery.com/jquery-3.7.0.min.js'
 // import  'https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js'
@@ -59,7 +64,8 @@ import "vue-toastification/dist/index.css"
 
     export default{
         components:{
-            DataTable
+            DataTable,
+            ChildComponent
         },
         data(){
             return{
@@ -70,17 +76,23 @@ import "vue-toastification/dist/index.css"
                     },
                     {data:'name'}, 
                     {data:'mobile'}, 
-                    {data:'name'}, 
+                    {
+                        data:'name',
+                        render: function(data, type, row, meta){
+                            var btn = 'btn<i class="fas fa-edit"></i>';
+                            return btn;
+                        }
+                    }, 
                     ],
                 users: null,
             }
         },
-        setup(){
-            // function logouts(){
-            //     alert('S');   
-            // }
-        },
+        setup(){ },
         methods:{
+            parentCall(){
+                alert('Parent call..');
+                this.$refs.post.childCall(12)
+            },
             async logout(){
                 // Get toast interface
                 const toast = useToast();
@@ -120,7 +132,7 @@ import "vue-toastification/dist/index.css"
             }
         },
         mounted(){
-            this.getUsers();
+            // this.getUsers();
             // $("#table_users").DataTable();
         }
     }

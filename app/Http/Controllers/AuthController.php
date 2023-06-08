@@ -175,6 +175,15 @@ class AuthController extends Controller
         //
     }
     public function userDetails(Request $request){
+
+        if ($request->ajax()) {
+            $data = User::get();
+            return DataTables::of($data)
+            ->make(true);
+        }else{
+            echo 'This ';
+            die;
+        }
         // dd($request->all());
         // // $users = User::select('id','name', 'email', 'mobile')->first();
         // $users = User::latest()->get();
