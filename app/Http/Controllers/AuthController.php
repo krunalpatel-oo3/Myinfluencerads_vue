@@ -201,8 +201,13 @@ class AuthController extends Controller
         $users = User::select('id', 'name', 'mobile');
 
         return datatables($users)->make(true);
-
     }
+    public function resendOtp(Request $request){
+        // echo 'ddd';
+        
+        // dd($request->all());
+    }
+
     public function logout(){
         $user = Auth::user();
         // dd($user);

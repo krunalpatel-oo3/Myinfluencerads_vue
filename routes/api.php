@@ -24,6 +24,7 @@ Route::controller(AuthController::class)->group(function(){
 });
 
 Route::post('/registration', [AuthController::class, 'doRegister']);
+Route::post('/resend-otp',[AuthController::class,'resendOtp']);
 
 Route::group(['middleware' => 'auth:sanctum'],function(){
     Route::get('/users',[AuthController::class,'userDetails']);

@@ -22,6 +22,7 @@ import App from './App.vue';
 // import header from './components/includes/header.vue';
 import home from './components/home.vue';
 import Login from './components/authentication/login.vue';
+import Verification from './components/authentication/Verifications.vue';
 import Register from './components/authentication/Register.vue';
 import ForgotPassword from './components/authentication/ForgotPassword.vue';
 import Dashboard from './components/Dashboard.vue';
@@ -44,6 +45,7 @@ const router = createRouter({
     routes: [
         { path: '/', component: home },
         { path: '/login', component: Login, meta:{  hideNavbar: true,requireAuth: false} },
+        { path: '/Verification', component: Verification, meta:{  hideNavbar: true,requireAuth: false} },
         { path: '/register', component: Register,meta:{  hideNavbar: true} },
         { path: '/forgot_password', component: ForgotPassword,meta:{  hideNavbar: true,requireAuth: false} },
         { path: '/dashboard', component: Dashboard,meta:{ hideNavbar: false,requireAuth: true}},
