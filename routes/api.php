@@ -30,4 +30,6 @@ Route::group(['middleware' => 'auth:sanctum'],function(){
     Route::get('/users',[AuthController::class,'userDetails']);
     Route::get('/user-info', [AuthController::class, 'userInfo']);
     Route::post('logout',[AuthController::class,'logout']);
+    Route::get('/user-roles', [AuthController::class, 'userRoles']);
+    Route::post('/user-store',[AuthController::class,'store']);
 });

@@ -3,7 +3,13 @@
         <!-- banner section  -->
         <section class="banner-section">
             <div class="container">
-                <Form @submit="update()" method="post">
+                
+                <form @submit.prevent="update()" method="post">
+                    <vs-select  filter v-model="role_input">
+                        <vs-option v-for="role in roles"  :value="role.id" :label="role.name">{{ role.name}} </vs-option>
+                    </vs-select>
+                    <button type="submit">SB</button>
+
                     <div class="form-group">
                       <label for="pwd">Name:</label>
                       <Field type="text" name="name" v-model="form.name" class="form-control" placeholder="Enter Name" rules="required"/>
@@ -26,7 +32,7 @@
                       <input type="text" v-model="form.mobile" class="form-control" placeholder="Enter Mobile Number">
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
-                  </Form>
+                </form>
             </div>
         </section>
     </main>
@@ -66,12 +72,19 @@
                     amc_price: '',
                 },
                 is_close: 1,
+                roles: [],
+                role_input: '',
             }
         },
         mounted: function() {
             const token = localStorage.getItem('token');
             console.log(token);
             this.getUserData(1);
+
+            axios.get('api/user-roles').then(res =>{
+                console.log(res.data);
+                this.roles = res.data;
+            });
         },
         methods: {
             onChange(e){
@@ -84,6 +97,13 @@
             },
             update(){
                 alert();
+                const postData = {
+                    title: this.role_input,
+                    // description: this.$refs.post_description.value,
+                };
+                axios.post('api/user-store', postData).then(res =>{
+
+                });
             },
             getUserData(id){
                 axios.get('api/user-info').then(res =>{

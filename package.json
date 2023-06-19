@@ -12,6 +12,11 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^6.4.0",
+        "@fortawesome/free-brands-svg-icons": "^6.4.0",
+        "@fortawesome/free-regular-svg-icons": "^6.4.0",
+        "@fortawesome/free-solid-svg-icons": "^6.4.0",
+        "@fortawesome/vue-fontawesome": "^3.0.3",
         "@vee-validate/i18n": "^4.9.6",
         "@vee-validate/rules": "^4.9.6",
         "@vitejs/plugin-vue": "^4.2.3",
@@ -33,6 +38,8 @@
         "vue-touch": "^2.0.0-beta.4",
         "vue3-touch-events": "^4.1.2",
         "vuelidate": "^0.7.7",
+        "vuesax": "^4.0.1-alpha.25",
+        "vuesax-alpha": "^0.0.1-alpha.3",
         "vuex": "^4.0.2"
     }
 }

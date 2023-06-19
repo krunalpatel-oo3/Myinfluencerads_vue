@@ -9,14 +9,6 @@ import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import Toast from "vue-toastification";
 
-
-
-const app = createApp(App);
-app.use(Toast, {
-    transition: "Vue-Toastification__fade",
-    maxToasts: 20,
-    newestOnTop: true
-});
 // Import components
 import App from './App.vue';
 // import header from './components/includes/header.vue';
@@ -27,6 +19,29 @@ import Register from './components/authentication/Register.vue';
 import ForgotPassword from './components/authentication/ForgotPassword.vue';
 import Dashboard from './components/Dashboard.vue';
 import Manage_Profile from './components/dashboard/manage_profile.vue';
+import Engineer from './components/dashboard/engineer.vue';
+
+import vuesax from 'vuesax-alpha'
+import 'vuesax-alpha/dist/vuesax.css'
+
+/* import the fontawesome core */
+import { library } from '@fortawesome/fontawesome-svg-core'
+
+/* import font awesome icon component */
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+/* import specific icons */
+import { faUserSecret, faUser, faMusic, faSave } from '@fortawesome/free-solid-svg-icons'
+
+/* add icons to the library */
+library.add(faUserSecret, faUser, faMusic, faSave)
+
+const app = createApp(App).component('font-awesome-icon', FontAwesomeIcon);
+app.use(Toast, {
+    transition: "Vue-Toastification__fade",
+    maxToasts: 20,
+    newestOnTop: true
+});
 
 const origin = 'http://127.0.0.1:8000/';
 
@@ -50,6 +65,7 @@ const router = createRouter({
         { path: '/forgot_password', component: ForgotPassword,meta:{  hideNavbar: true,requireAuth: false} },
         { path: '/dashboard', component: Dashboard,meta:{ hideNavbar: false,requireAuth: true}},
         { path: '/manage-profile', component: Manage_Profile,meta:{ hideNavbar: false,requireAuth: true}},
+        { path: '/engineer', component: Engineer,meta:{ hideNavbar: false,requireAuth: true}},
         // { path: '/products/:id/edit', component: ProductForm },
     ]
 });
@@ -62,6 +78,8 @@ router.beforeEach((to, from)=>{
     }
 
 });
+
+app.use(vuesax);
 app.use(router);
 
 // app.use(VueSweetalert2);

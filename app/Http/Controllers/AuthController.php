@@ -140,7 +140,7 @@ class AuthController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request->all());
     }
 
     /**
@@ -203,9 +203,15 @@ class AuthController extends Controller
         return datatables($users)->make(true);
     }
     public function resendOtp(Request $request){
-        // echo 'ddd';
+        // DB::table('login_status')->where('')
         
         // dd($request->all());
+    }
+    
+    public function userRoles(){
+        $roles = DB::table('user_roles')->get();
+        return $roles;
+        // dd($roles);
     }
 
     public function logout(){
