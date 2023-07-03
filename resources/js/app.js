@@ -36,6 +36,9 @@ import { faUserSecret, faUser, faMusic, faSave } from '@fortawesome/free-solid-s
 /* add icons to the library */
 library.add(faUserSecret, faUser, faMusic, faSave)
 
+import helper from './helper'
+
+
 const app = createApp(App).component('font-awesome-icon', FontAwesomeIcon);
 app.use(Toast, {
     transition: "Vue-Toastification__fade",
@@ -50,10 +53,6 @@ window.base_url = origin + "public/";
 window.image_path = origin + "/public/uploads/";
 window.local_image_path = origin + "/public/frontassets/images/";
 window.api_path = origin + "/api/";
-
-// import VueSweetalert2 from 'vue-sweetalert2';
-// import 'sweetalert2/dist/sweetalert2.min.css';
-// Vue.component('myHeader', header);
 
 const router = createRouter({
     history: createWebHistory(),
@@ -79,6 +78,7 @@ router.beforeEach((to, from)=>{
 
 });
 
+app.use(helper);
 app.use(vuesax);
 app.use(router);
 

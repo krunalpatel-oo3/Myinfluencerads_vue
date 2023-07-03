@@ -5,10 +5,17 @@
             <div class="container">
                 
                 <form @submit.prevent="update()" method="post">
-                    <vs-select  filter v-model="role_input">
+                    <vs-select  filter v-model="role_input" placeholder="Please select" >
                         <vs-option v-for="role in roles"  :value="role.id" :label="role.name">{{ role.name}} </vs-option>
                     </vs-select>
-                    <button type="submit">SB</button>
+                    
+                    <h1>Number format :  {{ $numFormat(100000) }}</h1>
+                    <h1>Number format with dollar sign :  {{ $numFormatWithDollar(100000) }}</h1>
+                    <h1>Number format with dollar sign :  {{ $subString('This ia smkn kfnndjfndkfk dknfksdnfksdnfk ') }}</h1>
+
+                    <!-- <Select2 v-model="myValue" :options="myOptions" :settings="{ settingOption: value, settingOption: value }" @change="myChangeEvent($event)" @select="mySelectEvent($event)" />
+                    <h4>Value: {{ myValue }}</h4> -->
+
 
                     <div class="form-group">
                       <label for="pwd">Name:</label>
@@ -47,6 +54,8 @@
 
     //Validate:
     import { Form, Field, ErrorMessage,defineRule  } from 'vee-validate';
+    
+    // import Select2 from 'vue3-select2-component';
 
     defineRule("required", (value) => {
     if (!value || !value.length) {
@@ -59,11 +68,14 @@
             Form,
             Field,
             ErrorMessage,
-            defineRule 
+            defineRule ,
+            // Select2
         },
         // name: "Register",
         data() {
             return {
+                myValue: '',
+            myOptions: ['op1', 'op2', 'op3'],
                 token_data: localStorage.getItem('token'), 
                 form: {
                     name : '',
@@ -78,11 +90,12 @@
         },
         mounted: function() {
             const token = localStorage.getItem('token');
-            console.log(token);
+            
+            console.log(this.$subString('This ia smkn kfnndjfndkfk dknfksdnfksdnfk '))
             this.getUserData(1);
-
+            
             axios.get('api/user-roles').then(res =>{
-                console.log(res.data);
+                // console.log(res.data);
                 this.roles = res.data;
             });
         },

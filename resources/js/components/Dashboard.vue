@@ -9,10 +9,12 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="table-responsive">
+                            <button @click="reloadTable"> Reload </button>
                             <DataTable 
                             
                              :columns="columns"
                              ajax="api/users"
+                             ref="table"
                              class="table table-striped table-bordered display" :options="{ responsive:true, autowidth:false, dom:'Bfrtip'}">
                                 <thead>
                                     <tr>
@@ -71,6 +73,7 @@ import ChildComponent from "./ChildComponent.vue";
         },
         data(){
             return{
+                dt:null,
                 columns: [
                         {data:null, render: function(data, type, row, meta){
                             return `${meta.row+1}`
@@ -91,6 +94,12 @@ import ChildComponent from "./ChildComponent.vue";
         },
         setup(){ },
         methods:{
+            reloadTable(){
+                this.dt.ajax.reload( null, false )
+                // this.$refs.table.refresh();
+                // this.dt.ajax.url('api/users').load();
+                alert('t')
+            },
             parentCall(){
                 alert('Parent call..');
                 this.$refs.post.childCall(12)
@@ -134,6 +143,7 @@ import ChildComponent from "./ChildComponent.vue";
             }
         },
         mounted(){
+            console.log(this.dt = this.$refs.table.dt)
             // this.getUsers();
             // $("#table_users").DataTable();
         }
